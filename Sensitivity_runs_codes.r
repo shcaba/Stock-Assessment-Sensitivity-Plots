@@ -1,6 +1,7 @@
 devtools::install_github("r4ss/r4ss")
 library(r4ss)
-
+library(ggplot2)
+library(plyr)
 
 RUN.SS<-function(path, ss.exe="SS",ss.cmd=" -nohess -nox")
 {
@@ -27,9 +28,6 @@ for(i in 1:Runs)
   }
 
 #Process output
-devtools::install_github("r4ss/r4ss")
-library(r4ss)
-
 survey.like<-Lt.like<-Age.like<-survey.lambda<-Lt.lambda<-Age.lambda<-parms<-qs<-dev.quants<-list()
 for(i in 1:Runs) 
   {
@@ -258,11 +256,12 @@ ggplot(Dev.quants.LC.ggplot,aes(Model_num_plot,RE))+geom_point(aes(shape=Metric,
   geom_hline(yintercept =c(-0.12,0.413),lty=2,color=four.colors[3])+
   scale_x_continuous(breaks = 2:32,labels=unique(Dev.quants.LC.ggplot$Model_name))+
   scale_y_continuous(limits=c(-1,2))+
-  theme(axis.text.x = element_text(angle=90))+
+  theme(axis.text.x = element_text(angle=90,vjust=0.25))+
   labs(x = "Likelihood component removed",y = "Relative error")+
   annotate("text",x=c(4,14.5,27,-1,-1),y=c(2,2,2,0.48,-0.18),label=c("Index","Lengths","Ages","TRP","LRP"))
 
 
+Dev.quants.MS.ggplot$Metric<-revalue(Dev.quants.MS.ggplot$Metric,c("SB0"="SS0","SB2017"="SS2017","SB2017/SB0"="SS2017/SS0"))
 ggplot(Dev.quants.MS.ggplot,aes(Model_num_plot,RE))+geom_point(aes(shape=Metric,color=Metric))+
   geom_rect(aes(xmin=1,xmax=28,ymin=-0.118,ymax=0.118),fill=NA,color=four.colors[1])+ 
   geom_rect(aes(xmin=1,xmax=28,ymin=-0.224,ymax=0.224),fill=NA,color=four.colors[2])+ 
@@ -270,7 +269,7 @@ ggplot(Dev.quants.MS.ggplot,aes(Model_num_plot,RE))+geom_point(aes(shape=Metric,
   geom_rect(aes(xmin=1,xmax=28,ymin=-0.17,ymax=0.17),fill=NA,color=four.colors[4])+ 
   geom_vline(xintercept =c(5.5,8.5,10.5,14.5,20.5),lty=2)+
   geom_hline(yintercept =c(-0.12,0.413),lty=2,color=four.colors[3])+
-  theme(axis.text.x = element_text(angle=90))+
+  theme(axis.text.x = element_text(angle=90,vjust=0.25))+
   labs(x = "Model specification",y = "Relative error")+
   scale_x_continuous(breaks = 2:27,labels=unique(Dev.quants.MS.ggplot$Model_name))+
   scale_y_continuous(limits=c(-1,2))+
