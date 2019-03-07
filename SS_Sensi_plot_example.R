@@ -64,8 +64,8 @@ SS_Sensi_plot(model.summaries=model.summaries,
 						sensi_xlab="Sensitivity scenarios", #X-axis label
 						ylims.in=c(-1,2,-1,2,-1,2,-1,2,-1,2,-1,2), #Y-axis label
 						plot.figs=c(1,1,1,1,1,1), #Which plots to make/save? 
-						sensi.type.breaks=c(9.5,21.5),
-						anno.x=c(4,14.5,27),
-						anno.y=c(2,2,2),
-						anno.lab=c("Index","Lengths","Ages"))
+						sensi.type.breaks=c(9.5,21.5), #vertical breaks that can separate out types of sensitivities
+						anno.x=c(4,14.5,27), # Vertical positioning of the sensitivity types labels
+						anno.y=c(2,2,2), # Horizontal positioning of the sensitivity types labels
+						anno.lab=c("Index","Lengths","Ages")) #Sensitivity types labels
 
