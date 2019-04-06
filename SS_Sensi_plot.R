@@ -41,37 +41,37 @@ SS_Sensi_plot<-function(model.summaries,
 	if(any(model.summaries$nsexes==1))
 		{
 			dev.quants<-rbind(
-						model.summaries$quants[model.summaries$quants$Label=="SSB_Unfished",1:(dim(model.summaries$quants)[2]-2)]/2,
+						model.summaries$quants[model.summaries$quants$Label=="SSB_Initial",1:(dim(model.summaries$quants)[2]-2)]/2,
 						(model.summaries$quants[model.summaries$quants$Label==paste0("SSB_",current.year),1:(dim(model.summaries$quants)[2]-2)])/2,
 						model.summaries$quants[model.summaries$quants$Label==paste0("Bratio_",current.year),1:(dim(model.summaries$quants)[2]-2)],
-						model.summaries$quants[model.summaries$quants$Label=="TotYield_SPRtgt",1:(dim(model.summaries$quants)[2]-2)]/2,
-						model.summaries$quants[model.summaries$quants$Label=="Fstd_SPRtgt",1:(dim(model.summaries$quants)[2]-2)]
+						model.summaries$quants[model.summaries$quants$Label=="Dead_Catch_SPR",1:(dim(model.summaries$quants)[2]-2)]/2,
+						model.summaries$quants[model.summaries$quants$Label=="Fstd_SPR",1:(dim(model.summaries$quants)[2]-2)]
 						)
 			#Extract SDs for use in the ggplots
 			dev.quants.SD<-c(
-						model.summaries$quantsSD[model.summaries$quantsSD$Label=="SSB_Unfished",1]/2,
+						model.summaries$quantsSD[model.summaries$quantsSD$Label=="SSB_Initial",1]/2,
 						(model.summaries$quantsSD[model.summaries$quantsSD$Label==paste0("SSB_",current.year),1])/2,
 						model.summaries$quantsSD[model.summaries$quantsSD$Label==paste0("Bratio_",current.year),1],
-						model.summaries$quantsSD[model.summaries$quantsSD$Label=="TotYield_SPRtgt",1]/2,
-						model.summaries$quantsSD[model.summaries$quantsSD$Label=="Fstd_SPRtgt",1]
+						model.summaries$quantsSD[model.summaries$quantsSD$Label=="Dead_Catch_SPR",1]/2,
+						model.summaries$quantsSD[model.summaries$quantsSD$Label=="Fstd_SPR",1]
 						)
 		}
 	if(any(model.summaries$nsexes==2))
 		{
 			dev.quants<-rbind(
-						model.summaries$quants[model.summaries$quants$Label=="SSB_Unfished",1:(dim(model.summaries$quants)[2]-2)],
+						model.summaries$quants[model.summaries$quants$Label=="SSB_Initial",1:(dim(model.summaries$quants)[2]-2)],
 						model.summaries$quants[model.summaries$quants$Label==paste0("SSB_",current.year),1:(dim(model.summaries$quants)[2]-2)],
 						model.summaries$quants[model.summaries$quants$Label==paste0("Bratio_",current.year),1:(dim(model.summaries$quants)[2]-2)],
-						model.summaries$quants[model.summaries$quants$Label=="TotYield_SPRtgt",1:(dim(model.summaries$quants)[2]-2)],
-						model.summaries$quants[model.summaries$quants$Label=="Fstd_SPRtgt",1:(dim(model.summaries$quants)[2]-2)]
+						model.summaries$quants[model.summaries$quants$Label=="Dead_Catch_SPR",1:(dim(model.summaries$quants)[2]-2)],
+						model.summaries$quants[model.summaries$quants$Label=="Fstd_SPR",1:(dim(model.summaries$quants)[2]-2)]
 						)
 			#Extract SDs for use in the ggplots
 			dev.quants.SD<-c(
-						model.summaries$quantsSD[model.summaries$quantsSD$Label=="SSB_Unfished",1],
+						model.summaries$quantsSD[model.summaries$quantsSD$Label=="SSB_Initial",1],
 						(model.summaries$quantsSD[model.summaries$quantsSD$Label==paste0("SSB_",current.year),1]),
 						model.summaries$quantsSD[model.summaries$quantsSD$Label==paste0("Bratio_",current.year),1],
-						model.summaries$quantsSD[model.summaries$quantsSD$Label=="TotYield_SPRtgt",1],
-						model.summaries$quantsSD[model.summaries$quantsSD$Label=="Fstd_SPRtgt",1]
+						model.summaries$quantsSD[model.summaries$quantsSD$Label=="Dead_Catch_SPR",1],
+						model.summaries$quantsSD[model.summaries$quantsSD$Label=="Fstd_SPR",1]
 						)
 		}
 	dev.quants.labs<-data.frame(c("SB0",paste0("SSB_",current.year),paste0("Bratio_",current.year),"MSY_SPR","F_SPR"),dev.quants,"Derived quantities")
@@ -107,16 +107,29 @@ if(any(is.na(sensi.type.breaks)))
 		lty.in=0
 		sensi.type.breaks=c(1,1)
 	}
+if(any(is.na(anno.x)))
+	{
+		anno.x=c(1,1)
+	}
+if(any(is.na(anno.y)))
+	{
+		anno.y=c(1,1)
+	}
+
+if(any(is.na(anno.lab)))
+	{
+		anno.lab=c("","")
+	}
 
 if(plot.figs[1]==1)
 {
 ggplot(Dev.quants.ggplot,aes(Model_num_plot,RE))+
   geom_point(aes(shape=Metric,color=Metric))+
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[2],ymax=CI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[3])+
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[4],ymax=CI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[5],ymax=CI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[2],ymax=CI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[3])+
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[4],ymax=CI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[5],ymax=CI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
   geom_hline(yintercept =c(TRP,LRP),lty=c(1,2),color=c("darkgreen","darkred"))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot$Model_name))+
   scale_y_continuous(limits=ylims.in[1:2])+
@@ -132,7 +145,7 @@ if(plot.figs[2]==1)
 Dev.quants.ggplot.SB0<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1])
 ggplot(Dev.quants.ggplot.SB0,aes(Model_num_plot,RE))+
   geom_point(aes(shape=Metric),color=four.colors[1])+
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
   geom_hline(yintercept =0,lty=1,color="gray")+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.SB0$Model_name))+
   scale_y_continuous(limits=ylims.in[3:4])+
@@ -148,7 +161,7 @@ if(plot.figs[3]==1)
 Dev.quants.ggplot.SBt<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[2])
 ggplot(Dev.quants.ggplot.SBt,aes(Model_num_plot,RE))+
   geom_point(aes(shape=Metric),color=four.colors[2])+
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[2],ymax=CI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[2],ymax=CI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
   geom_hline(yintercept =0,lty=1,color="gray")+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.SBt$Model_name))+
   scale_y_continuous(limits=ylims.in[5:6])+
@@ -164,7 +177,7 @@ if(plot.figs[4]==1)
 Dev.quants.ggplot.Dep<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[3])
 ggplot(Dev.quants.ggplot.Dep,aes(Model_num_plot,RE))+
   geom_point(aes(shape=Metric),color=four.colors[3])+
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
   geom_hline(yintercept =c(TRP,LRP,0),lty=c(1,2,1),color=c("darkgreen","darkred","gray"))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.Dep$Model_name))+
   scale_y_continuous(limits=ylims.in[7:8])+
@@ -180,7 +193,7 @@ if(plot.figs[5]==1)
 Dev.quants.ggplot.MSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[4])
 ggplot(Dev.quants.ggplot.MSY,aes(Model_num_plot,RE))+
   geom_point(aes(shape=Metric),color=four.colors[4])+
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[4])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[4],ymax=CI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
   geom_hline(yintercept =0,lty=1,color="gray")+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.MSY$Model_name))+
   scale_y_continuous(limits=ylims.in[9:10])+
@@ -196,7 +209,7 @@ if(plot.figs[6]==1)
 Dev.quants.ggplot.FMSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[5])
 ggplot(Dev.quants.ggplot.FMSY,aes(Model_num_plot,RE))+
   geom_point(aes(shape=Metric),color=four.colors[5])+
-  geom_rect(aes(xmin=1,xmax=33,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[5])+ 
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[5],ymax=CI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
   geom_hline(yintercept =0,lty=1,color="gray")+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.FMSY$Model_name))+
   scale_y_continuous(limits=ylims.in[11:12])+
