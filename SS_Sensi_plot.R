@@ -16,7 +16,7 @@ gg_color_hue <- function(n)
 #current.year: Year to report output
 #mod.names: List the names of the sensitivity runs
 #likelihood.out=c(1,1,1): Note which likelihoods are in the model (surveys, lengths, ages)
-#filename.in="Sensi_RE_out.DMP": #Saved file of relative errors
+#Sensi.RE.out="Sensi_RE_out.DMP": #Saved file of relative errors
 #CI=0.95:Confidence interval box based on the reference model
 #TRP.in=0.4:Target relative abundance value
 #LRP.in=0.25: Limit relative abundance value
@@ -33,7 +33,7 @@ SS_Sensi_plot<-function(model.summaries,
 						current.year, 
 						mod.names, 
 						likelihood.out=c(1,1,1), 
-						filename.in="Sensi_RE_out.DMP", 
+						Sensi.RE.out="Sensi_RE_out.DMP", 
 						CI=0.95, 
 						TRP.in=0.4, 
 						LRP.in=0.25, 
@@ -132,7 +132,7 @@ colnames(Dev.quants.temp)<-c("Metric",mod.names[-1])
 Dev.quants.ggplot<-data.frame(melt(Dev.quants.temp,id.vars=c("Metric")),RE[,2:3])
 colnames(Dev.quants.ggplot)<-c("Metric","Model_name","Value","Model_num_plot","RE")
 Dev.quants.ggplot$Metric<-factor(Dev.quants.ggplot$Metric,levels=unique(Dev.quants.ggplot$Metric))
-save(Dev.quants.ggplot,file=filename.in)
+save(Dev.quants.ggplot,file=Sensi.RE.out)
 
 #Calculate RE values for reference model boxes
 CI_DQs_RE<-((dev.quants[,1]+dev.quants.SD*qnorm(CI))-dev.quants[,1])/dev.quants[,1]
