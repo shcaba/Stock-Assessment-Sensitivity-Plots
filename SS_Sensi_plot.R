@@ -45,11 +45,12 @@ SS_Sensi_plot<-function(model.summaries,
 						anno.y=NA,
 						anno.lab=NA)
 {
+ 	num.likes<-sum(likelihood.out)*2+2
  	if(missing(mod.names)){mod.names<-paste("model ",1:model.summaries$n)}
 		if(likelihood.out[1]==1)
 			{
-				survey.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(3,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Survey_lambda")
-				survey.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(4,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Survey_likelihood")			
+				survey.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(3,dim(model.summaries$likelihoods_by_fleet)[1], num.likes),][-1:-2]),"Survey_lambda")
+				survey.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(4,dim(model.summaries$likelihoods_by_fleet)[1], num.likes),][-1:-2]),"Survey_likelihood")			
 			}
 			else
 			{
@@ -57,8 +58,8 @@ SS_Sensi_plot<-function(model.summaries,
 			}
 		if(likelihood.out[2]==1)
 			{
-				Lt.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(5,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Lt_lambda")
-				Lt.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(6,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Lt_likelihood")
+				Lt.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(5,dim(model.summaries$likelihoods_by_fleet)[1], num.likes),][-1:-2]),"Lt_lambda")
+				Lt.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(6,dim(model.summaries$likelihoods_by_fleet)[1], num.likes),][-1:-2]),"Lt_likelihood")
 			}
 			else
 			{
@@ -66,8 +67,8 @@ SS_Sensi_plot<-function(model.summaries,
 			}
 		if(likelihood.out[3]==1)
 			{
-				Age.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(7,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Age_lambda")
-				Age.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(8,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Age_likelihood")
+				Age.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(7,dim(model.summaries$likelihoods_by_fleet)[1], num.likes),][-1:-2]),"Age_lambda")
+				Age.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(8,dim(model.summaries$likelihoods_by_fleet)[1], num.likes),][-1:-2]),"Age_likelihood")
 			}
 			else
 			{
