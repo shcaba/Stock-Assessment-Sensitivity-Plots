@@ -12,13 +12,31 @@ gg_color_hue <- function(n)
   		hcl(h = hues, l = 65, c = 100)[1:n]
 	}
 
+
+#current.year: Year to report output
+#mod.names: List the names of the sensitivity runs
+#likelihood.out=c(1,1,1): Note which likelihoods are in the model (surveys, lengths, ages)
+#filename.in="Sensi_RE_out.DMP": #Saved file of relative errors
+#CI=0.95:Confidence interval box based on the reference model
+#TRP.in=0.4:Target relative abundance value
+#LRP.in=0.25: Limit relative abundance value
+#sensi_xlab="Sensitivity scenarios" : X-axis label
+#ylims.in=c(-1,2,-1,2,-1,2,-1,2,-1,2,-1,2): Y-axis label
+#plot.figs=c(1,1,1,1,1,1): Which plots to make/save?
+#sensi.type.breaks=NA: vertical breaks that can separate out types of sensitivities
+#anno.x=NA: Vertical positioning of the sensitivity types labels
+#anno.y=NA: Horizontal positioning of the sensitivity types labels
+#anno.lab=NA: Sensitivity types labels
+
+
 SS_Sensi_plot<-function(model.summaries,
-						current.year,
-						mod.names,
-						filename.in="Sensi_RE_out.DMP",
-						CI=0.95,
-						TRP.in=0.4,
-						LRP.in=0.25,
+						current.year, 
+						mod.names, 
+						likelihood.out=c(1,1,1), 
+						filename.in="Sensi_RE_out.DMP", 
+						CI=0.95, 
+						TRP.in=0.4, 
+						LRP.in=0.25, 
 						sensi_xlab="Sensitivity scenarios",
 						ylims.in=c(-1,2,-1,2,-1,2,-1,2,-1,2,-1,2),
 						plot.figs=c(1,1,1,1,1,1),
@@ -28,12 +46,33 @@ SS_Sensi_plot<-function(model.summaries,
 						anno.lab=NA)
 {
  	if(missing(mod.names)){mod.names<-paste("model ",1:model.summaries$n)}
-	survey.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(1,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Survey_lambda")
-	survey.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(2,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Survey_likelihood")
-	Lt.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(3,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Lt_lambda")
-	Lt.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(4,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Lt_likelihood")
-	Age.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(5,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Age_lambda")
-	Age.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(6,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Age_likelihood")
+		if(likelihood.out[1]==1)
+			{
+				survey.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(3,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Survey_lambda")
+				survey.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(4,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Survey_likelihood")			
+			}
+			else
+			{
+				survey.lambda<-survey.like<-data.frame(t(rep(NA,model.summaries$n+2)))
+			}
+		if(likelihood.out[2]==1)
+			{
+				Lt.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(5,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Lt_lambda")
+				Lt.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(6,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Lt_likelihood")
+			}
+			else
+			{
+				Lt.lambda<-Lt.like<-data.frame(t(rep(NA,model.summaries$n+2)))
+			}
+		if(likelihood.out[3]==1)
+			{
+				Age.lambda<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(7,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Age_lambda")
+				Age.like<-data.frame(rownames(t(model.summaries$likelihoods_by_fleet))[-1:-2],t(model.summaries$likelihoods_by_fleet[seq(8,dim(model.summaries$likelihoods_by_fleet)[1], 6),][-1:-2]),"Age_likelihood")
+			}
+			else
+			{
+				 Age.lambda<-Age.like<-data.frame(t(rep(NA,model.summaries$n+2)))
+			}
 
 	parms<-model.summaries$pars
 	#rownames(parms)<-parms$Label
