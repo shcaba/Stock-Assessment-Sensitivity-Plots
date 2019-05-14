@@ -1,7 +1,0 @@
-SS-V3.30.04.02-safe;_2017_05_31;_Stock_Synthesis_by_Richard_Methot_(NOAA)_using_ADMB_11.6
-Thu Jun 15 13:26:57 2017
-
- Early recdev biasadj is >2 times ratio of rmse to sigmaR
- Early recdev biasadj is >2 times ratio of rmse to sigmaR
- N warnings: 2
-Number_of_active_parameters_on_or_near_bounds: 7

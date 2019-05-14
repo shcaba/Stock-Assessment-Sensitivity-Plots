@@ -8,7 +8,7 @@ zz<-list()
 Runs<-32
 for(i in 1:Runs) 
   {
-	setwd(paste0(Dir,"Reference Model all data in_",i))
+	setwd(paste0(Dir,"Cab_SCS_MS_",i))
 	if(i==1){zz[[i]]<-SS_output(getwd())}
 	if(i>1){zz[[i]]<-SS_output(getwd(),covar=FALSE)}
   }
@@ -19,53 +19,41 @@ model.summaries<- SSsummarize(zz)
 
 #Define the names of each model. This will be used to label runs in the table and in the figures.
 mod.names<-c(
-"Reference",
-"I: -CA dockside rec",
-"I: -OR dockside rec",
-"I: -WA dockside rec",
-"I: -CA CPFV",
-"I: -OR onboard",
-"I: -AFSC Triennial",
-"I: -NWFSC Trawl",
-"I: -IPHC",
-"LtC: -CA trawl",
-"LtC: -CA non-trawl",
-"LtC: -CA dockside rec",
-"LtC: -OR-WA trawl",
-"LtC: -OR-WA non-trawl",
-"LtC: -OR dockside rec",
-"LtC: -WA dockside rec",
-"LtC: -CA CPFV",
-"LtC: -OR onboard",
-"LtC: -AFSC Triennial",
-"LtC: -NWFSC Trawl",
-"LtC: -IPHC",
-"AgeC: -CA non-trawl",
-"AgeC: -CA dockside rec",
-"AgeC: -OR-WA trawl",
-"AgeC: -OR-WA non-trawl",
-"AgeC: -OR dockside rec",
-"AgeC: -WA dockside rec",
-"AgeC: -NWFSC Trawl",
-"AgeC: -IPHC",
-"-all indices",
-"-all length comps",
-"-all age comps"
+  "Reference",
+  "M: Fix to 2009",
+  "M: Fix to prior",
+  "M: Fix to Hamel",
+  "M: Fix to VBGF",
+  "M: Fix to OR",
+  "VBGF 2009",
+  "VBGF Grebel",
+  "OR maturity",
+  "Est. h",
+  "All rec devs",
+  "No rec devs",
+  "High bias adj.",
+  "Harmonic mean",
+  "Dirichlet",
+  "Wts = 1",
+  "No blocks",
+  "First blocks in 2000",
+  "Alt rec catches"
 )
 
 #Run the sensitivity plot function
 SS_Sensi_plot(model.summaries=model.summaries,
-						current.year=2017,
-						mod.names=mod.names, #List the names of the sensitivity runs
-						filename.in="Sensi_RE_out.DMP", #Saved file of relative errors
-						CI=0.95, #Confidence interval box based on the reference model
-						TRP.in=0.4, #Target relative abundance value
-						LRP.in=0.25, #Limit relative abundance value
-						sensi_xlab="Sensitivity scenarios", #X-axis label
-						ylims.in=c(-1,2,-1,2,-1,2,-1,2,-1,2,-1,2), #Y-axis label
-						plot.figs=c(1,1,1,1,1,1), #Which plots to make/save? 
-						sensi.type.breaks=c(9.5,21.5), #vertical breaks that can separate out types of sensitivities
-						anno.x=c(4,14.5,27), # Vertical positioning of the sensitivity types labels
-						anno.y=c(2,2,2), # Horizontal positioning of the sensitivity types labels
-						anno.lab=c("Index","Lengths","Ages")) #Sensitivity types labels
-
+              current.year=2019,
+              mod.names=mod.names, #List the names of the sensitivity runs
+              likelihood.out=c(1,1,0),
+              Sensi.RE.out="Sensi_RE_out.DMP", #Saved file of relative errors
+              CI=0.95, #Confidence interval box based on the reference model
+              TRP.in=0.4, #Target relative abundance value
+              LRP.in=0.25, #Limit relative abundance value
+              sensi_xlab="Sensitivity scenarios", #X-axis label
+              ylims.in=c(-1,1,-1,1,-1,1,-1,1,-1,1,-1,1), #Y-axis label
+              plot.figs=c(1,1,1,1,1,1), #Which plots to make/save? 
+              sensi.type.breaks=c(6.5,9.5,13.5,16.5), #vertical breaks that can separate out types of sensitivities
+              anno.x=c(3.75,8,8,11.5,15,18), # Vertical positioning of the sensitivity types labels
+              anno.y=c(1,1,0.925,1,1,1), # Horizontal positioning of the sensitivity types labels
+              anno.lab=c("Natural mortality","VBGF","Maturity","Recruitment","Data Wts.","Other") #Sensitivity types labels
+)
