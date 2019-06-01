@@ -124,8 +124,11 @@ SS_Sensi_plot<-function(model.summaries,
 						)
 		}
 	dev.quants.labs<-data.frame(c("SB0",paste0("SSB_",current.year),paste0("Bratio_",current.year),"MSY_SPR","F_SPR"),dev.quants,"Derived quantities")
-	colnames(survey.lambda)<-colnames(survey.like)<-colnames(Lt.lambda)<-colnames(Lt.like)<-colnames(Age.lambda)<-colnames(Age.like)<-colnames(parms)<-colnames(dev.quants.labs)<-c("Type",mod.names,"Label")
-	Like.parm.quants<-rbind(survey.like,survey.lambda,Lt.like,Lt.lambda,Age.like,Age.lambda,parms,dev.quants.labs)	
+	AICs<-2*model.summaries$npars+(2*as.numeric(model.summaries$likelihoods[1,1:model.summaries$n]))
+	deltaAICs<-AICs-AICs[1]
+	AIC.out<-as.data.frame(cbind(c("AIC","deltaAIC"),rbind(AICs,deltaAICs),c("AIC")))
+	colnames(AIC.out)<-colnames(survey.lambda)<-colnames(survey.like)<-colnames(Lt.lambda)<-colnames(Lt.like)<-colnames(Age.lambda)<-colnames(Age.like)<-colnames(parms)<-colnames(dev.quants.labs)<-c("Type",mod.names,"Label")
+	Like.parm.quants<-rbind(AIC.out,survey.like,survey.lambda,Lt.like,Lt.lambda,Age.like,Age.lambda,parms,dev.quants.labs)	
 	Like.parm.quants.table.data<-as_grouped_data(Like.parm.quants,groups=c("Label"))
 	#as_flextable(Like.parm.quants.table.data)
 	write.csv(Like.parm.quants.table.data,paste0(Dir,"Likes_parms_devquants_table.csv"))
