@@ -6,7 +6,7 @@ library(r4ss)
 Dir<-"C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
 folder.name<-"Cab_SCS_MS_" #Common folder name for all sensitivity runs
 zz<-list()
-Runs<-32
+Runs<-19
 for(i in 1:Runs) 
   {
 	setwd(paste0(Dir,folder.name,i))

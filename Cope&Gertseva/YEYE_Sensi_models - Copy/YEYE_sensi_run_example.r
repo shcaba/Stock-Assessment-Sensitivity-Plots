@@ -53,7 +53,6 @@ Mod.spec.names<-c(
 
 
 #Run the sensitivity plot function
-setwd(Dir)
 SS_Sensi_plot(model.summaries=model.summaries,
               current.year=2017,
               mod.names=Mod.spec.names, #List the names of the sensitivity runs
@@ -63,10 +62,10 @@ SS_Sensi_plot(model.summaries=model.summaries,
               TRP.in=0.4, #Target relative abundance value
               LRP.in=0.25, #Limit relative abundance value
               sensi_xlab="Sensitivity scenarios", #X-axis label
-              ylims.in=c(-1,2,-1,2,-1,2,-1,2,-1,2,-1,2), #Y-axis label
-              plot.figs=c(1,1,1,1,1,1,1,1), #Which plots to make/save? 
+              ylims.in=c(-1,1,-1,1,-1,1,-1,1,-1,1,-1,1), #Y-axis label
+              plot.figs=c(1,1,1,1,1,1), #Which plots to make/save? 
               sensi.type.breaks=c(5.5,8.5,10.5,14.5,20.5), #vertical breaks that can separate out types of sensitivities
-              anno.x=c(3.5,3.5 ,7,9.5,12.5,12.5,17.5,24, -1, -1), # Vertical positioning of the sensitivity types labels
-              anno.y=c(1.9,1.8,1.9,1.9,1.9,1.8,1.9,1.9,0.48,-0.18), # Horizontal positioning of the sensitivity types labels
-              anno.lab=c("Ageing","Error","M","h","L-W;","Mat.","Removals","Other","TRP","LRP") #Sensitivity types labels
+              anno.x=c(3.5,7,9.5,12.5,17.5,24, -1, -1), # Vertical positioning of the sensitivity types labels
+              anno.y=c(1.9,1.9,1.9,1.9,1.9,1.9,0.48,-0.18), # Horizontal positioning of the sensitivity types labels
+              anno.lab=c("Ageing Er.","M","h","L-W; Mat.","Removals","Other","TRP","LRP") #Sensitivity types labels
 )

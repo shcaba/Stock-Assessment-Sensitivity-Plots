@@ -16,7 +16,7 @@ gg_color_hue <- function(n)
 #current.year: Year to report output
 #mod.names: List the names of the sensitivity runs
 #likelihood.out=c(1,1,1): Note which likelihoods are in the model (surveys, lengths, ages)
-#Sensi.RE.out="Sensi_RE_out.DMP": #Saved file of relative changes
+#Sensi.RE.out="Sensi_RE_out.DMP": #Saved file of relative errors
 #CI=0.95:Confidence interval box based on the reference model
 #TRP.in=0.4:Target relative abundance value
 #LRP.in=0.25: Limit relative abundance value
@@ -39,7 +39,7 @@ SS_Sensi_plot<-function(model.summaries,
 						LRP.in=0.25, 
 						sensi_xlab="Sensitivity scenarios",
 						ylims.in=c(-1,2,-1,2,-1,2,-1,2,-1,2,-1,2),
-						plot.figs=c(1,1,1,1,1,1,1,1),
+						plot.figs=c(1,1,1,1,1,1),
 						sensi.type.breaks=NA,
 						anno.x=NA,
 						anno.y=NA,
@@ -93,7 +93,7 @@ SS_Sensi_plot<-function(model.summaries,
 						model.summaries$quants[model.summaries$quants$Label=="SSB_Initial",1:(dim(model.summaries$quants)[2]-2)]/2,
 						(model.summaries$quants[model.summaries$quants$Label==paste0("SSB_",current.year),1:(dim(model.summaries$quants)[2]-2)])/2,
 						model.summaries$quants[model.summaries$quants$Label==paste0("Bratio_",current.year),1:(dim(model.summaries$quants)[2]-2)],
-						model.summaries$quants[model.summaries$quants$Label=="TotYield_SPRtgt",1:(dim(model.summaries$quants)[2]-2)]/2,
+						model.summaries$quants[model.summaries$quants$Label=="SPR_MSY",1:(dim(model.summaries$quants)[2]-2)]/2,
 						model.summaries$quants[model.summaries$quants$Label=="Fstd_SPRtgt",1:(dim(model.summaries$quants)[2]-2)]
 						)
 			#Extract SDs for use in the ggplots
@@ -101,7 +101,7 @@ SS_Sensi_plot<-function(model.summaries,
 						model.summaries$quantsSD[model.summaries$quantsSD$Label=="SSB_Initial",1]/2,
 						(model.summaries$quantsSD[model.summaries$quantsSD$Label==paste0("SSB_",current.year),1])/2,
 						model.summaries$quantsSD[model.summaries$quantsSD$Label==paste0("Bratio_",current.year),1],
-						model.summaries$quantsSD[model.summaries$quantsSD$Label=="TotYield_SPRtgt",1]/2,
+						model.summaries$quantsSD[model.summaries$quantsSD$Label=="SPR_MSY",1]/2,
 						model.summaries$quantsSD[model.summaries$quantsSD$Label=="Fstd_SPRtgt",1]
 						)
 		}
@@ -111,7 +111,7 @@ SS_Sensi_plot<-function(model.summaries,
 						model.summaries$quants[model.summaries$quants$Label=="SSB_Initial",1:(dim(model.summaries$quants)[2]-2)],
 						model.summaries$quants[model.summaries$quants$Label==paste0("SSB_",current.year),1:(dim(model.summaries$quants)[2]-2)],
 						model.summaries$quants[model.summaries$quants$Label==paste0("Bratio_",current.year),1:(dim(model.summaries$quants)[2]-2)],
-						model.summaries$quants[model.summaries$quants$Label=="TotYield_SPRtgt",1:(dim(model.summaries$quants)[2]-2)],
+						model.summaries$quants[model.summaries$quants$Label=="SPR_MSY",1:(dim(model.summaries$quants)[2]-2)],
 						model.summaries$quants[model.summaries$quants$Label=="Fstd_SPRtgt",1:(dim(model.summaries$quants)[2]-2)]
 						)
 			#Extract SDs for use in the ggplots
@@ -119,7 +119,7 @@ SS_Sensi_plot<-function(model.summaries,
 						model.summaries$quantsSD[model.summaries$quantsSD$Label=="SSB_Initial",1],
 						(model.summaries$quantsSD[model.summaries$quantsSD$Label==paste0("SSB_",current.year),1]),
 						model.summaries$quantsSD[model.summaries$quantsSD$Label==paste0("Bratio_",current.year),1],
-						model.summaries$quantsSD[model.summaries$quantsSD$Label=="TotYield_SPRtgt",1],
+						model.summaries$quantsSD[model.summaries$quantsSD$Label=="SPR_MSY",1],
 						model.summaries$quantsSD[model.summaries$quantsSD$Label=="Fstd_SPRtgt",1]
 						)
 		}
@@ -133,7 +133,7 @@ SS_Sensi_plot<-function(model.summaries,
 	#as_flextable(Like.parm.quants.table.data)
 	write.csv(Like.parm.quants.table.data,paste0(Dir,"Likes_parms_devquants_table.csv"))
 
-#Calcualte Relative changes
+#Calcualte relative errors
 dev.quants.mat<-as.matrix(dev.quants)
 colnames(dev.quants.mat)<-1:dim(dev.quants.mat)[2]
 rownames(dev.quants.mat)<-c("SB0",paste0("SSB_",current.year),paste0("Bratio_",current.year),"MSY_SPR","F_SPR")
@@ -151,7 +151,7 @@ save(Dev.quants.ggplot,file=Sensi.RE.out)
 CI_DQs_RE<-((dev.quants[,1]+dev.quants.SD*qnorm(CI))-dev.quants[,1])/dev.quants[,1]
 TRP<-(TRP.in-dev.quants[3,1])/dev.quants[3,1]
 LRP<-(LRP.in-dev.quants[3,1])/dev.quants[3,1]
-#Plot Relative changes
+#Plot relative errors
 four.colors<-gg_color_hue(5)
 lty.in=2
 if(any(is.na(sensi.type.breaks)))
@@ -186,7 +186,7 @@ ggplot(Dev.quants.ggplot,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot$Model_name))+
   scale_y_continuous(limits=ylims.in[1:2])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative change")+
+  labs(x = sensi_xlab,y = "Relative error")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   ggsave("Sensi_REplot_all.png")
@@ -202,7 +202,7 @@ ggplot(Dev.quants.ggplot.SB0,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.SB0$Model_name))+
   scale_y_continuous(limits=ylims.in[3:4])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative change")+
+  labs(x = sensi_xlab,y = "Relative error")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   ggsave("Sensi_REplot_SB0.png")
@@ -218,7 +218,7 @@ ggplot(Dev.quants.ggplot.SBt,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.SBt$Model_name))+
   scale_y_continuous(limits=ylims.in[5:6])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative change")+
+  labs(x = sensi_xlab,y = "Relative error")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_SBcurrent.png")
@@ -234,7 +234,7 @@ ggplot(Dev.quants.ggplot.Dep,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.Dep$Model_name))+
   scale_y_continuous(limits=ylims.in[7:8])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative change")+
+  labs(x = sensi_xlab,y = "Relative error")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_status.png")
@@ -250,7 +250,7 @@ ggplot(Dev.quants.ggplot.MSY,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.MSY$Model_name))+
   scale_y_continuous(limits=ylims.in[9:10])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative change")+
+  labs(x = sensi_xlab,y = "Relative error")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_MSY.png")
@@ -266,52 +266,11 @@ ggplot(Dev.quants.ggplot.FMSY,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.FMSY$Model_name))+
   scale_y_continuous(limits=ylims.in[11:12])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative change")+
+  labs(x = sensi_xlab,y = "Relative error")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_FMSY.png")
 }
-
-if(plot.figs[7]==1)
-{
-Dev.quants.ggplot.SB0<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1])
-Dev.quants.ggplot.SBt<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[2])
-Dev.quants.ggplot.Dep<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[3])
-Dev.quants.ggplot.SBDep<-rbind(Dev.quants.ggplot.SB0,Dev.quants.ggplot.SBt,Dev.quants.ggplot.Dep)
-ggplot(Dev.quants.ggplot.SBDep,aes(Model_num_plot,RE))+
-  geom_point(aes(shape=Metric,color=Metric))+
-  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
-  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[2],ymax=CI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
-  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
-  geom_hline(yintercept =c(TRP,LRP,0),lty=c(1,2,1),color=c("darkgreen","darkred","gray"))+
-  scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.Dep$Model_name))+
-  scale_y_continuous(limits=ylims.in[7:8])+
-  theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative change")+
-  annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
-  geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-ggsave("Sensi_REplot_SB_Status.png")
-}
-
-if(plot.figs[8]==1)
-{
-Dev.quants.ggplot.FMSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[5])
-Dev.quants.ggplot.MSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[4])
-Dev.quants.ggplot.MSYFMSY<-rbind(Dev.quants.ggplot.MSY,Dev.quants.ggplot.FMSY)
-ggplot(Dev.quants.ggplot.MSYFMSY,aes(Model_num_plot,RE))+
-  geom_point(aes(shape=Metric,color=Metric))+
-  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[4],ymax=CI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
-  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[5],ymax=CI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
-  geom_hline(yintercept =0,lty=1,color="gray")+
-  scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.FMSY$Model_name))+
-  scale_y_continuous(limits=ylims.in[11:12])+
-  theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative change")+
-  annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
-  geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
-ggsave("Sensi_REplot_MSYFMSY.png")
-}
-
 }
 
 

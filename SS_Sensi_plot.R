@@ -16,7 +16,7 @@ gg_color_hue <- function(n)
 #current.year: Year to report output
 #mod.names: List the names of the sensitivity runs
 #likelihood.out=c(1,1,1): Note which likelihoods are in the model (surveys, lengths, ages)
-#Sensi.RE.out="Sensi_RE_out.DMP": #Saved file of relative errors
+#Sensi.RE.out="Sensi_RE_out.DMP": #Saved file of relative changes
 #CI=0.95:Confidence interval box based on the reference model
 #TRP.in=0.4:Target relative abundance value
 #LRP.in=0.25: Limit relative abundance value
@@ -133,7 +133,7 @@ SS_Sensi_plot<-function(model.summaries,
 	#as_flextable(Like.parm.quants.table.data)
 	write.csv(Like.parm.quants.table.data,paste0(Dir,"Likes_parms_devquants_table.csv"))
 
-#Calcualte relative errors
+#Calcualte Relative changes
 dev.quants.mat<-as.matrix(dev.quants)
 colnames(dev.quants.mat)<-1:dim(dev.quants.mat)[2]
 rownames(dev.quants.mat)<-c("SB0",paste0("SSB_",current.year),paste0("Bratio_",current.year),"MSY_SPR","F_SPR")
@@ -151,7 +151,7 @@ save(Dev.quants.ggplot,file=Sensi.RE.out)
 CI_DQs_RE<-((dev.quants[,1]+dev.quants.SD*qnorm(CI))-dev.quants[,1])/dev.quants[,1]
 TRP<-(TRP.in-dev.quants[3,1])/dev.quants[3,1]
 LRP<-(LRP.in-dev.quants[3,1])/dev.quants[3,1]
-#Plot relative errors
+#Plot Relative changes
 four.colors<-gg_color_hue(5)
 lty.in=2
 if(any(is.na(sensi.type.breaks)))
@@ -186,7 +186,7 @@ ggplot(Dev.quants.ggplot,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot$Model_name))+
   scale_y_continuous(limits=ylims.in[1:2])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative error")+
+  labs(x = sensi_xlab,y = "Relative change")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   ggsave("Sensi_REplot_all.png")
@@ -202,7 +202,7 @@ ggplot(Dev.quants.ggplot.SB0,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.SB0$Model_name))+
   scale_y_continuous(limits=ylims.in[3:4])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative error")+
+  labs(x = sensi_xlab,y = "Relative change")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   ggsave("Sensi_REplot_SB0.png")
@@ -218,7 +218,7 @@ ggplot(Dev.quants.ggplot.SBt,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.SBt$Model_name))+
   scale_y_continuous(limits=ylims.in[5:6])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative error")+
+  labs(x = sensi_xlab,y = "Relative change")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_SBcurrent.png")
@@ -234,7 +234,7 @@ ggplot(Dev.quants.ggplot.Dep,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.Dep$Model_name))+
   scale_y_continuous(limits=ylims.in[7:8])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative error")+
+  labs(x = sensi_xlab,y = "Relative change")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_status.png")
@@ -250,7 +250,7 @@ ggplot(Dev.quants.ggplot.MSY,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.MSY$Model_name))+
   scale_y_continuous(limits=ylims.in[9:10])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative error")+
+  labs(x = sensi_xlab,y = "Relative change")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_MSY.png")
@@ -266,7 +266,7 @@ ggplot(Dev.quants.ggplot.FMSY,aes(Model_num_plot,RE))+
   scale_x_continuous(breaks = 2:model.summaries$n,labels=unique(Dev.quants.ggplot.FMSY$Model_name))+
   scale_y_continuous(limits=ylims.in[11:12])+
   theme(axis.text.x = element_text(angle=90,vjust=0.25))+
-  labs(x = sensi_xlab,y = "Relative error")+
+  labs(x = sensi_xlab,y = "Relative change")+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_FMSY.png")
