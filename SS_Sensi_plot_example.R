@@ -1,6 +1,6 @@
 devtools::install_github("r4ss/r4ss")
 library(r4ss)
-
+library(flextable)
 #Set directory and extract ouput from models
 #Model 1 needs to be the Reference model, with sensitivity runs following from run 2 on.
 Dir<-"C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"
@@ -54,7 +54,8 @@ SS_Sensi_plot(model.summaries=model.summaries,
               ylims.in=c(-1,1,-1,1,-1,1,-1,1,-1,1,-1,1), #Y-axis label
               plot.figs=c(1,1,1,1,1,1), #Which plots to make/save? 
               sensi.type.breaks=c(6.5,9.5,13.5,16.5), #vertical breaks that can separate out types of sensitivities
-              anno.x=c(3.75,8,8,11.5,15,18), # Vertical positioning of the sensitivity types labels
-              anno.y=c(1,1,0.925,1,1,1), # Horizontal positioning of the sensitivity types labels
-              anno.lab=c("Natural mortality","VBGF","Maturity","Recruitment","Data Wts.","Other") #Sensitivity types labels
+              anno.x=c(3.75,8,11.5,15,18), # Vertical positioning of the sensitivity types labels
+              anno.y=c(1,1,1,1,1), # Horizontal positioning of the sensitivity types labels
+              anno.lab=c("Natural mortality","VBGF/Mat.","Recruitment","Data Wts.","Other") #Sensitivity types labels
 )
+
