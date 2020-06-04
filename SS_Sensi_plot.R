@@ -147,11 +147,12 @@ colnames(dev.quants.mat)<-1:dim(dev.quants.mat)[2]
 rownames(dev.quants.mat)<-c("SB0",paste0("SSB_",current.year),paste0("Bratio_",current.year),"MSY_SPR","F_SPR")
 #RE<-melt((as.matrix(dev.quants)-as.matrix(dev.quants)[,1])/as.matrix(dev.quants)[,1])
 RE<-melt((dev.quants.mat-dev.quants.mat[,1])/dev.quants.mat[,1])[-1:-5,]
+logRE<-melt(log(dev.quants.mat/dev.quants.mat[,1]))[-1:-5,]
 #Get values for plots
 Dev.quants.temp<-as.data.frame(cbind(rownames(dev.quants.mat),dev.quants.mat[,-1]))
 colnames(Dev.quants.temp)<-c("Metric",mod.names[-1])
-Dev.quants.ggplot<-data.frame(melt(Dev.quants.temp,id.vars=c("Metric")),RE[,2:3])
-colnames(Dev.quants.ggplot)<-c("Metric","Model_name","Value","Model_num_plot","RE")
+Dev.quants.ggplot<-data.frame(melt(Dev.quants.temp,id.vars=c("Metric")),RE[,2:3],logRE[,2:3])
+colnames(Dev.quants.ggplot)<-c("Metric","Model_name","Value","Model_num_plot","RE","Model_num_plot_log","logRE")
 Dev.quants.ggplot$Metric<-factor(Dev.quants.ggplot$Metric,levels=unique(Dev.quants.ggplot$Metric))
 save(Dev.quants.ggplot,file=Sensi.RE.out)
 
@@ -159,6 +160,11 @@ save(Dev.quants.ggplot,file=Sensi.RE.out)
 CI_DQs_RE<-((dev.quants[,1]+dev.quants.SD*qnorm(CI))-dev.quants[,1])/dev.quants[,1]
 TRP<-(TRP.in-dev.quants[3,1])/dev.quants[3,1]
 LRP<-(LRP.in-dev.quants[3,1])/dev.quants[3,1]
+
+logCI_DQs_RE<-log((dev.quants[,1]+dev.quants.SD*qnorm(CI))/dev.quants[,1])
+logTRP<-log(TRP.in/dev.quants[3,1])
+logLRP<-log(LRP.in/dev.quants[3,1])
+
 #Plot Relative changes
 four.colors<-gg_color_hue(5)
 lty.in=2
@@ -180,9 +186,10 @@ if(any(is.na(anno.lab)))
 	{
 		anno.lab=c("","")
 	}
-#browser()
+
 if(plot.figs[1]==1)
 {
+#RE plot
 ggplot(Dev.quants.ggplot,aes(Model_num_plot,RE))+
   geom_point(aes(shape=Metric,color=Metric))+
   geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
@@ -213,10 +220,43 @@ ggplot(Dev.quants.ggplot,aes(Model_num_plot,RE))+
     annotate("text",x=c((model.summaries$n+2),(model.summaries$n+2)),y=c(TRP+0.03,LRP-0.03),label=c("TRP","LRP"),size=c(3,3),color=c("darkgreen","darkred"))+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   ggsave("Sensi_REplot_all.png")
+
+#log plot
+    ggplot(Dev.quants.ggplot,aes(Model_num_plot,logRE))+
+    geom_point(aes(shape=Metric,color=Metric))+
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[1],ymax=logCI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[2],ymax=logCI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[3],ymax=logCI_DQs_RE[3]),fill=NA,color=four.colors[3])+
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[4],ymax=logCI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[5],ymax=logCI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
+    geom_hline(yintercept =c(logTRP,logLRP,0),lty=c(2,2,1),color=c("darkgreen","darkred","gray"))+
+    scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot$Model_name))+
+    scale_y_continuous(limits=ylims.in[1:2])+
+    theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),legend.text.align = 0,panel.grid.minor = element_blank())+
+    scale_shape_manual(values=c(15:18,12),
+                       name ="",
+                       labels = c(expression(SO[0]),
+                                  as.expression(bquote('SO'[.(current.year)])),
+                                  bquote(frac(SO[.(current.year)],SO[0])),
+                                  expression(MSY[SPR]),
+                                  expression(F[SPR])))+
+    scale_color_manual(values=four.colors[1:5],
+                       name ="",
+                       labels = c(expression(SO[0]),
+                                  as.expression(bquote('SO'[.(current.year)])),
+                                  bquote(frac(SO[.(current.year)],SO[0])),
+                                  expression(MSY[SPR]),
+                                  expression(F[SPR])))+
+    labs(x = sensi_xlab,y = "Log relative change")+
+    annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
+    annotate("text",x=c((model.summaries$n+2),(model.summaries$n+2)),y=c(logTRP+0.03,logLRP-0.03),label=c("TRP","LRP"),size=c(3,3),color=c("darkgreen","darkred"))+
+    geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+  ggsave("Sensi_logREplot_all.png")
 }
 
 if(plot.figs[1]==1)
 {
+#RE plots
   Dev.quants.ggplot.SBs<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1]| Metric == unique(Dev.quants.ggplot$Metric)[2])
   p1<-ggplot(Dev.quants.ggplot.SBs,aes(Model_num_plot,RE))+
     geom_point(aes(shape=Metric,color=Metric))+
@@ -283,10 +323,80 @@ if(plot.figs[1]==1)
   
   p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
   ggsave("Sensi_REplot_SB_Dep_F_MSY.png",p4)
+
+#Log plots
+Dev.quants.ggplot.SBs<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1]| Metric == unique(Dev.quants.ggplot$Metric)[2])
+  p1<-ggplot(Dev.quants.ggplot.SBs,aes(Model_num_plot,logRE))+
+    geom_point(aes(shape=Metric,color=Metric))+
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[1],ymax=logCI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[2],ymax=logCI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
+    scale_x_continuous(breaks = 2:(model.summaries$n))+
+    scale_y_continuous(limits=ylims.in[1:2])+
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          panel.grid.minor = element_blank())+
+    scale_shape_manual(values=c(16,17),
+                       name ="",
+                       labels = c(expression(SO[0]),
+                                  as.expression(bquote('SO'[.(current.year)]))))+
+    scale_color_manual(values=four.colors[1:2],
+                       name ="",
+                       labels = c(expression(SO[0]),
+                                  as.expression(bquote('SO'[.(current.year)]))))+
+    theme(legend.text.align = 0)+
+    labs(x = " ",y = " ")+
+    annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
+    geom_hline(yintercept =0,lwd=0.5,color="gray")+
+    geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+  
+  Dev.quants.ggplot.Dep<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[3])
+  p2<-ggplot(Dev.quants.ggplot.Dep,aes(Model_num_plot,logRE))+
+    geom_point(aes(color=Metric))+
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[3],ymax=logCI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
+    scale_x_continuous(breaks = 2:(model.summaries$n))+
+    scale_y_continuous(limits=ylims.in[7:8])+
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          panel.grid.minor = element_blank())+
+    theme(legend.text.align = 0)+
+    labs(x = " ",y = "Log Relative change")+
+    scale_colour_manual(values = four.colors[3], 
+                        name ="",
+                        labels = as.expression(bquote(frac(SO[.(current.year)],SO[0]))))+
+    annotate("text",x=c((model.summaries$n+2),(model.summaries$n+2)),y=c(logTRP+0.08,logLRP-0.08),label=c("TRP","LRP"),size=c(3,3),color=c("darkgreen","darkred"))+
+    geom_hline(yintercept =c(logTRP,logLRP,0),lty=c(3,3,1),lwd=c(0.5,0.5,0.5),color=c("darkgreen","darkred","gray"))+
+    geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+  
+  Dev.quants.ggplot.MSY_FMSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[4]| Metric == unique(Dev.quants.ggplot$Metric)[5])
+  p3<-ggplot(Dev.quants.ggplot.MSY_FMSY,aes(Model_num_plot,logRE,group=Metric))+
+    geom_point(aes(shape=Metric,color=Metric))+
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[4],ymax=logCI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[5],ymax=logCI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
+    scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot$Model_name))+
+    scale_y_continuous(limits=ylims.in[9:10])+
+    theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
+          legend.text.align = 0,
+          panel.grid.minor = element_blank())+
+    scale_shape_manual(values=c(16,17),
+                       name ="",
+                       labels = expression(MSY[SPR],F[SPR]))+
+    scale_color_manual(values=four.colors[4:5],
+                       name ="",
+                       labels = expression(MSY[SPR],F[SPR]))+
+    labs(x = sensi_xlab,y = "")+
+    guides(fill=FALSE)+
+    #annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
+    geom_hline(yintercept =0,lwd=0.5,color="gray")+
+    geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+  
+  p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
+  ggsave("Sensi_logREplot_SB_Dep_F_MSY.png",p4)
+  
 }
 
 if(plot.figs[2]==1)
 {
+#RE plot
 Dev.quants.ggplot.SB0<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1])
 ggplot(Dev.quants.ggplot.SB0,aes(Model_num_plot,RE))+
   geom_point(aes(color=Metric))+
@@ -304,10 +414,30 @@ ggplot(Dev.quants.ggplot.SB0,aes(Model_num_plot,RE))+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   ggsave("Sensi_REplot_SO_0.png")
+
+  #Log plot
+  Dev.quants.ggplot.SB0<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1])
+  ggplot(Dev.quants.ggplot.SB0,aes(Model_num_plot,logRE))+
+    geom_point(aes(color=Metric))+
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[1],ymax=logCI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
+    geom_hline(yintercept =0,lty=1,color="gray")+
+    scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.SB0$Model_name))+
+    scale_y_continuous(limits=ylims.in[3:4])+
+    theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
+          legend.text.align = 0,
+          panel.grid.minor = element_blank())+
+    scale_colour_manual(values = four.colors[1], 
+                        name ="",
+                        labels = expression(SO[0]))+
+    labs(x = sensi_xlab,y = "Log Relative change")+
+    annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
+    geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+  ggsave("Sensi_logREplot_SO_0.png")
 }
 
 if(plot.figs[3]==1)
 {
+#RE plots  
 Dev.quants.ggplot.SBt<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[2])
 ggplot(Dev.quants.ggplot.SBt,aes(Model_num_plot,RE))+
   geom_point(aes(color=Metric))+
@@ -325,10 +455,30 @@ ggplot(Dev.quants.ggplot.SBt,aes(Model_num_plot,RE))+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_SOcurrent.png")
+
+#Log plots  
+Dev.quants.ggplot.SBt<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[2])
+ggplot(Dev.quants.ggplot.SBt,aes(Model_num_plot,logRE))+
+  geom_point(aes(color=Metric))+
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[2],ymax=logCI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
+  geom_hline(yintercept =0,lty=1,color="gray")+
+  scale_x_continuous(breaks = 2:(model.summaries$n),minor_breaks=NULL,labels=unique(Dev.quants.ggplot.SBt$Model_name))+
+  scale_y_continuous(limits=ylims.in[5:6])+
+  theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
+        #panel.grid.minor = element_blank(),
+        legend.text.align = 0)+
+  scale_colour_manual(values = four.colors[2], 
+                      name ="",
+                      labels = as.expression(bquote('SO'[.(current.year)])))+
+  labs(x = sensi_xlab,y = "Log Relative change")+
+  annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
+  geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+ggsave("Sensi_logREplot_SOcurrent.png")
 }
 
 if(plot.figs[4]==1)
 {
+#RE plots
 Dev.quants.ggplot.Dep<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[3])
 ggplot(Dev.quants.ggplot.Dep,aes(Model_num_plot,RE))+
   geom_point(aes(color=Metric))+
@@ -348,10 +498,32 @@ ggplot(Dev.quants.ggplot.Dep,aes(Model_num_plot,RE))+
   geom_hline(yintercept =c(TRP,LRP,0),lty=c(3,3,1),lwd=c(0.5,0.5,0.5),color=c("darkgreen","darkred","gray"))+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_status.png")
+
+#Log plots
+Dev.quants.ggplot.Dep<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[3])
+ggplot(Dev.quants.ggplot.Dep,aes(Model_num_plot,logRE))+
+  geom_point(aes(color=Metric))+
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[3],ymax=logCI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
+  scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.Dep$Model_name))+
+  scale_y_continuous(limits=ylims.in[7:8])+
+  theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
+        legend.text.align = 0,
+        panel.grid.minor = element_blank())+
+  labs(x = " ",y = "Relative change")+
+  scale_colour_manual(values = four.colors[3], 
+                      name ="",
+                      labels = as.expression(bquote(frac(SO[.(current.year)],SO[0]))))+
+  annotate("text",x=c((model.summaries$n+2),(model.summaries$n+2)),y=c(logTRP+0.03,logLRP-0.03),label=c("TRP","LRP"),size=c(3,3),color=c("darkgreen","darkred"))+
+  labs(x = sensi_xlab,y = "Log Relative change")+
+  annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
+  geom_hline(yintercept =c(logTRP,logLRP,0),lty=c(3,3,1),lwd=c(0.5,0.5,0.5),color=c("darkgreen","darkred","gray"))+
+  geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+ggsave("Sensi_logREplot_status.png")
 }
 
 if(plot.figs[5]==1)
 {
+  #RE plots
   Dev.quants.ggplot.MSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[4])
   ggplot(Dev.quants.ggplot.MSY,aes(Model_num_plot,RE))+
     geom_point(aes(color=Metric))+
@@ -368,10 +540,28 @@ if(plot.figs[5]==1)
     annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   ggsave("Sensi_REplot_MSY.png")
+  #Log plots
+  Dev.quants.ggplot.MSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[4])
+  ggplot(Dev.quants.ggplot.MSY,aes(Model_num_plot,logRE))+
+    geom_point(aes(color=Metric))+
+    geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[4],ymax=logCI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
+    geom_hline(yintercept =0,lty=1,color="gray")+
+    scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.MSY$Model_name))+
+    scale_y_continuous(limits=ylims.in[9:10])+
+    theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
+          panel.grid.minor = element_blank())+
+    scale_color_manual(values=four.colors[4],
+                       name ="",
+                       labels = expression(MSY[SPR]))+
+    labs(x = sensi_xlab,y = "Log Relative change")+
+    annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
+    geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+  ggsave("Sensi_logREplot_MSY.png")
 }
 
 if(plot.figs[6]==1)
 {
+#RE plots
 Dev.quants.ggplot.FMSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[5])
 ggplot(Dev.quants.ggplot.FMSY,aes(Model_num_plot,RE))+
   geom_point(aes(color=Metric))+
@@ -388,8 +578,25 @@ ggplot(Dev.quants.ggplot.FMSY,aes(Model_num_plot,RE))+
   annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
   geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
 ggsave("Sensi_REplot_FMSY.png")
-}
 
+#RE plots
+Dev.quants.ggplot.FMSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[5])
+ggplot(Dev.quants.ggplot.FMSY,aes(Model_num_plot,logRE))+
+  geom_point(aes(color=Metric))+
+  geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[5],ymax=logCI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
+  geom_hline(yintercept =0,lty=1,color="gray")+
+  scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.FMSY$Model_name))+
+  scale_y_continuous(limits=ylims.in[11:12])+
+  theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
+        panel.grid.minor = element_blank())+
+  scale_color_manual(values=four.colors[5],
+                     name ="",
+                     labels = expression(F[SPR]))+
+  labs(x = sensi_xlab,y = "Log Relative change")+
+  annotate("text",x=anno.x,y=anno.y,label=anno.lab)+
+  geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
+ggsave("Sensi_logREplot_FMSY.png")
+}
 }
 
 

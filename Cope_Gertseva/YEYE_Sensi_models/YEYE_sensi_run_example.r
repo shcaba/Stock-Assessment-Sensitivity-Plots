@@ -66,7 +66,7 @@ SS_Sensi_plot(model.summaries=model.summaries,
               ylims.in=c(-1,2,-1,2,-1,2,-1,2,-1,2,-1,2), #Y-axis label
               plot.figs=c(1,1,1,1,1,1,1,1), #Which plots to make/save? 
               sensi.type.breaks=c(5.5,8.5,10.5,14.5,20.5), #vertical breaks that can separate out types of sensitivities
-              anno.x=c(3.5,3.5 ,7,9.5,12.5,12.5,17.5,24, -1, -1), # Vertical positioning of the sensitivity types labels
-              anno.y=c(1.9,1.8,1.9,1.9,1.9,1.8,1.9,1.9,0.48,-0.18), # Horizontal positioning of the sensitivity types labels
-              anno.lab=c("Ageing","Error","M","h","L-W;","Mat.","Removals","Other","TRP","LRP") #Sensitivity types labels
+              anno.x=c(3.5,3.5 ,7,9.5,12.5,12.5,17.5,24), # Vertical positioning of the sensitivity types labels
+              anno.y=c(1.9,1.8,1.9,1.9,1.9,1.8,1.9,1.9), # Horizontal positioning of the sensitivity types labels
+              anno.lab=c("Ageing","Error","M","h","L-W;","Mat.","Removals","Other") #Sensitivity types labels
 )
