@@ -6,13 +6,14 @@ library(reshape2)
 library(flextable)
 library(officer)
 library(gridExtra)
+library(ggpubr)
+library(cowplot)
 
 gg_color_hue <- function(n) 
 	{
   		hues = seq(15, 375, length = n + 1)
   		hcl(h = hues, l = 65, c = 100)[1:n]
 	}
-
 
 #current.year: Year to report output
 #mod.names: List the names of the sensitivity runs
@@ -302,6 +303,7 @@ if(plot.figs[1]==1)
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           legend.text.align = 0,
           panel.grid.minor = element_blank())+
+    #          legend.text=element_text(size=rel(1)))+
     scale_shape_manual(values=c(16,17),
                        name ="",
                        labels = expression(MSY,F[SPR]))+
@@ -314,7 +316,8 @@ if(plot.figs[1]==1)
     geom_hline(yintercept =0,lwd=0.5,color="gray")+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   
-  p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
+  #p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
+  p4<-ggarrange(p1,p2,p3,nrow=3,ncol=1,align="v",heights=c(5,5,8))  
   ggsave("Sensi_REplot_SB_Dep_F_MSY.png",p4)
   
   #Log plots
@@ -352,11 +355,11 @@ if(plot.figs[1]==1)
           axis.text.x=element_blank(),
           panel.grid.minor = element_blank())+
     theme(legend.text.align = 0)+
-    labs(x = " ",y = "Log Relative change")+
+    labs(x = " ",y = "Log relative change")+
     scale_colour_manual(values = four.colors[3], 
                         name ="",
                         labels = as.expression(bquote(frac(SO[.(current.year)],SO[0]))))+
-    annotate("text",x=c((model.summaries$n+2),(model.summaries$n+2)),y=c(logTRP+0.08,logLRP-0.08),label=c("TRP","LRP"),size=c(3,3),color=c("darkgreen","darkred"))+
+    annotate("text",x=c((model.summaries$n+1),(model.summaries$n+1)),y=c(logTRP+0.08,logLRP-0.08),label=c("TRP","LRP"),size=c(3,3),color=c("darkgreen","darkred"))+
     geom_hline(yintercept =c(logTRP,logLRP,0),lty=c(3,3,1),lwd=c(0.5,0.5,0.5),color=c("darkgreen","darkred","gray"))+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   
@@ -370,6 +373,7 @@ if(plot.figs[1]==1)
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           legend.text.align = 0,
           panel.grid.minor = element_blank())+
+    #          legend.text=element_text(size=7.5))+
     scale_shape_manual(values=c(16,17),
                        name ="",
                        labels = expression(MSY[SPR],F[SPR]))+
@@ -382,7 +386,8 @@ if(plot.figs[1]==1)
     geom_hline(yintercept =0,lwd=0.5,color="gray")+
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   
-  p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
+  p4<-ggarrange(p1,p2,p3,nrow=3,ncol=1,align="v",heights=c(5,5,8))  
+  #p4<-grid.arrange(p1,p2,p3,heights=c(5,5,8))  
   ggsave("Sensi_logREplot_SB_Dep_F_MSY.png",p4)
   
 }
