@@ -181,11 +181,13 @@ if(any(is.na(anno.lab)))
 		anno.lab=c("","")
 	}
 
+#Begin plots
+pt.dodge=0.3  
 if(plot.figs[1]==1)
 {
   #RE plot
   ggplot(Dev.quants.ggplot,aes(Model_num_plot,RE))+
-    geom_point(aes(shape=Metric,color=Metric))+
+    geom_point(aes(shape=Metric,color=Metric),position=position_dodge(pt.dodge))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[2],ymax=CI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[3])+
@@ -193,8 +195,11 @@ if(plot.figs[1]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[5],ymax=CI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
     geom_hline(yintercept =c(TRP,LRP,0),lty=c(2,2,1),color=c("darkgreen","darkred","gray"))+
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot$Model_name))+
-    scale_y_continuous(limits=ylims.in[1:2])+
-    theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),legend.text.align = 0,panel.grid.minor = element_blank())+
+    #scale_y_continuous(limits=ylims.in[1:2])+
+    coord_cartesian(ylim=ylims.in[1:2])+ 
+    theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
+          legend.text.align = 0,
+          panel.grid.minor = element_blank())+
     scale_shape_manual(values=c(15:18,12),
                        name ="",
                        labels = c(expression(SO[0]),
@@ -217,7 +222,7 @@ if(plot.figs[1]==1)
   
   #log plot
   ggplot(Dev.quants.ggplot,aes(Model_num_plot,logRE))+
-    geom_point(aes(shape=Metric,color=Metric))+
+    geom_point(aes(shape=Metric,color=Metric),position=position_dodge(pt.dodge))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[1],ymax=logCI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[2],ymax=logCI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[3],ymax=logCI_DQs_RE[3]),fill=NA,color=four.colors[3])+
@@ -225,7 +230,8 @@ if(plot.figs[1]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[5],ymax=logCI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
     geom_hline(yintercept =c(logTRP,logLRP,0),lty=c(2,2,1),color=c("darkgreen","darkred","gray"))+
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot$Model_name))+
-    scale_y_continuous(limits=ylims.in[1:2])+
+    #scale_y_continuous(limits=ylims.in[1:2])+
+    coord_cartesian(ylim=ylims.in[1:2])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),legend.text.align = 0,panel.grid.minor = element_blank())+
     scale_shape_manual(values=c(15:18,12),
                        name ="",
@@ -253,11 +259,12 @@ if(plot.figs[1]==1)
   #RE plots
   Dev.quants.ggplot.SBs<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1]| Metric == unique(Dev.quants.ggplot$Metric)[2])
   p1<-ggplot(Dev.quants.ggplot.SBs,aes(Model_num_plot,RE))+
-    geom_point(aes(shape=Metric,color=Metric))+
+    geom_point(aes(shape=Metric,color=Metric),position=position_dodge(pt.dodge))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[2],ymax=CI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
     scale_x_continuous(breaks = 2:(model.summaries$n))+
-    scale_y_continuous(limits=ylims.in[1:2])+
+    #scale_y_continuous(limits=ylims.in[1:2])+
+    coord_cartesian(ylim=ylims.in[1:2])+ 
     theme(axis.title.x=element_blank(),
           axis.text.x=element_blank(),
           panel.grid.minor = element_blank())+
@@ -276,11 +283,13 @@ if(plot.figs[1]==1)
     geom_vline(xintercept =c(sensi.type.breaks),lty=lty.in)
   
   Dev.quants.ggplot.Dep<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[3])
+  
   p2<-ggplot(Dev.quants.ggplot.Dep,aes(Model_num_plot,RE))+
     geom_point(aes(color=Metric))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
     scale_x_continuous(breaks = 2:(model.summaries$n))+
-    scale_y_continuous(limits=ylims.in[7:8])+
+    #scale_y_continuous(limits=ylims.in[7:8])+
+    coord_cartesian(ylim=ylims.in[7:8])+ 
     theme(axis.title.x=element_blank(),
           axis.text.x=element_blank(),
           panel.grid.minor = element_blank())+
@@ -295,11 +304,12 @@ if(plot.figs[1]==1)
   
   Dev.quants.ggplot.MSY_FMSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[4]| Metric == unique(Dev.quants.ggplot$Metric)[5])
   p3<-ggplot(Dev.quants.ggplot.MSY_FMSY,aes(Model_num_plot,RE,group=Metric))+
-    geom_point(aes(shape=Metric,color=Metric))+
+    geom_point(aes(shape=Metric,color=Metric),position=position_dodge(pt.dodge))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[4],ymax=CI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[5],ymax=CI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot$Model_name))+
-    scale_y_continuous(limits=ylims.in[9:10])+
+    #scale_y_continuous(limits=ylims.in[9:10])+
+    coord_cartesian(ylim=ylims.in[9:10])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           legend.text.align = 0,
           panel.grid.minor = element_blank())+
@@ -323,11 +333,12 @@ if(plot.figs[1]==1)
   #Log plots
   Dev.quants.ggplot.SBs<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[1]| Metric == unique(Dev.quants.ggplot$Metric)[2])
   p1<-ggplot(Dev.quants.ggplot.SBs,aes(Model_num_plot,logRE))+
-    geom_point(aes(shape=Metric,color=Metric))+
+    geom_point(aes(shape=Metric,color=Metric),position=position_dodge(pt.dodge))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[1],ymax=logCI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[2],ymax=logCI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
     scale_x_continuous(breaks = 2:(model.summaries$n))+
-    scale_y_continuous(limits=ylims.in[1:2])+
+    #scale_y_continuous(limits=ylims.in[1:2])+
+    coord_cartesian(ylim=ylims.in[1:2])+ 
     theme(axis.title.x=element_blank(),
           axis.text.x=element_blank(),
           panel.grid.minor = element_blank())+
@@ -350,7 +361,8 @@ if(plot.figs[1]==1)
     geom_point(aes(color=Metric))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[3],ymax=logCI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
     scale_x_continuous(breaks = 2:(model.summaries$n))+
-    scale_y_continuous(limits=ylims.in[7:8])+
+    #scale_y_continuous(limits=ylims.in[7:8])+
+    coord_cartesian(ylim=ylims.in[7:8])+ 
     theme(axis.title.x=element_blank(),
           axis.text.x=element_blank(),
           panel.grid.minor = element_blank())+
@@ -365,11 +377,12 @@ if(plot.figs[1]==1)
   
   Dev.quants.ggplot.MSY_FMSY<-subset(Dev.quants.ggplot,Metric == unique(Dev.quants.ggplot$Metric)[4]| Metric == unique(Dev.quants.ggplot$Metric)[5])
   p3<-ggplot(Dev.quants.ggplot.MSY_FMSY,aes(Model_num_plot,logRE,group=Metric))+
-    geom_point(aes(shape=Metric,color=Metric))+
+    geom_point(aes(shape=Metric,color=Metric),position=position_dodge(pt.dodge))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[4],ymax=logCI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[5],ymax=logCI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot$Model_name))+
-    scale_y_continuous(limits=ylims.in[9:10])+
+    #scale_y_continuous(limits=ylims.in[9:10])+
+    coord_cartesian(ylim=ylims.in[9:10])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           legend.text.align = 0,
           panel.grid.minor = element_blank())+
@@ -401,7 +414,8 @@ if(plot.figs[2]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[1],ymax=CI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
     geom_hline(yintercept =0,lty=1,color="gray")+
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.SB0$Model_name))+
-    scale_y_continuous(limits=ylims.in[3:4])+
+    #scale_y_continuous(limits=ylims.in[3:4])+
+    coord_cartesian(ylim=ylims.in[3:4])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           legend.text.align = 0,
           panel.grid.minor = element_blank())+
@@ -420,7 +434,8 @@ if(plot.figs[2]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[1],ymax=logCI_DQs_RE[1]),fill=NA,color=four.colors[1])+ 
     geom_hline(yintercept =0,lty=1,color="gray")+
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.SB0$Model_name))+
-    scale_y_continuous(limits=ylims.in[3:4])+
+    #scale_y_continuous(limits=ylims.in[3:4])+
+    coord_cartesian(ylim=ylims.in[3:4])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           legend.text.align = 0,
           panel.grid.minor = element_blank())+
@@ -442,7 +457,8 @@ if(plot.figs[3]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[2],ymax=CI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
     geom_hline(yintercept =0,lty=1,color="gray")+
     scale_x_continuous(breaks = 2:(model.summaries$n),minor_breaks=NULL,labels=unique(Dev.quants.ggplot.SBt$Model_name))+
-    scale_y_continuous(limits=ylims.in[5:6])+
+    #scale_y_continuous(limits=ylims.in[5:6])+
+    coord_cartesian(ylim=ylims.in[5:6])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           #panel.grid.minor = element_blank(),
           legend.text.align = 0)+
@@ -461,7 +477,8 @@ if(plot.figs[3]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[2],ymax=logCI_DQs_RE[2]),fill=NA,color=four.colors[2])+ 
     geom_hline(yintercept =0,lty=1,color="gray")+
     scale_x_continuous(breaks = 2:(model.summaries$n),minor_breaks=NULL,labels=unique(Dev.quants.ggplot.SBt$Model_name))+
-    scale_y_continuous(limits=ylims.in[5:6])+
+    #scale_y_continuous(limits=ylims.in[5:6])+
+    coord_cartesian(ylim=ylims.in[5:6])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           #panel.grid.minor = element_blank(),
           legend.text.align = 0)+
@@ -482,7 +499,8 @@ if(plot.figs[4]==1)
     geom_point(aes(color=Metric))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[3],ymax=CI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.Dep$Model_name))+
-    scale_y_continuous(limits=ylims.in[7:8])+
+    #scale_y_continuous(limits=ylims.in[7:8])+
+    coord_cartesian(ylim=ylims.in[7:8])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           legend.text.align = 0,
           panel.grid.minor = element_blank())+
@@ -503,7 +521,8 @@ if(plot.figs[4]==1)
     geom_point(aes(color=Metric))+
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[3],ymax=logCI_DQs_RE[3]),fill=NA,color=four.colors[3])+ 
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.Dep$Model_name))+
-    scale_y_continuous(limits=ylims.in[7:8])+
+    #scale_y_continuous(limits=ylims.in[7:8])+
+    coord_cartesian(ylim=ylims.in[7:8])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           legend.text.align = 0,
           panel.grid.minor = element_blank())+
@@ -528,7 +547,8 @@ if(plot.figs[5]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[4],ymax=CI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
     geom_hline(yintercept =0,lty=1,color="gray")+
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.MSY$Model_name))+
-    scale_y_continuous(limits=ylims.in[9:10])+
+    #scale_y_continuous(limits=ylims.in[9:10])+
+    coord_cartesian(ylim=ylims.in[9:10])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           panel.grid.minor = element_blank())+
     scale_color_manual(values=four.colors[4],
@@ -545,7 +565,8 @@ if(plot.figs[5]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[4],ymax=logCI_DQs_RE[4]),fill=NA,color=four.colors[4])+ 
     geom_hline(yintercept =0,lty=1,color="gray")+
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.MSY$Model_name))+
-    scale_y_continuous(limits=ylims.in[9:10])+
+    #scale_y_continuous(limits=ylims.in[9:10])+
+    coord_cartesian(ylim=ylims.in[9:10])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           panel.grid.minor = element_blank())+
     scale_color_manual(values=four.colors[4],
@@ -566,7 +587,8 @@ if(plot.figs[6]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-CI_DQs_RE[5],ymax=CI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
     geom_hline(yintercept =0,lty=1,color="gray")+
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.FMSY$Model_name))+
-    scale_y_continuous(limits=ylims.in[11:12])+
+    #scale_y_continuous(limits=ylims.in[11:12])+
+    coord_cartesian(ylim=ylims.in[11:12])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           panel.grid.minor = element_blank())+
     scale_color_manual(values=four.colors[5],
@@ -584,7 +606,8 @@ if(plot.figs[6]==1)
     geom_rect(aes(xmin=1,xmax=model.summaries$n+1,ymin=-logCI_DQs_RE[5],ymax=logCI_DQs_RE[5]),fill=NA,color=four.colors[5])+ 
     geom_hline(yintercept =0,lty=1,color="gray")+
     scale_x_continuous(breaks = 2:(model.summaries$n),labels=unique(Dev.quants.ggplot.FMSY$Model_name))+
-    scale_y_continuous(limits=ylims.in[11:12])+
+    #scale_y_continuous(limits=ylims.in[11:12])+
+    coord_cartesian(ylim=ylims.in[11:12])+ 
     theme(axis.text.x = element_text(angle=45,hjust=1,vjust=1),
           panel.grid.minor = element_blank())+
     scale_color_manual(values=four.colors[5],
