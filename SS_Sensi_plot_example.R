@@ -1,6 +1,8 @@
 devtools::install_github("r4ss/r4ss")
 library(r4ss)
 library(flextable)
+library(ggpubr)
+
 #Set directory and extract ouput from models
 #Model 1 needs to be the Reference model, with sensitivity runs following from run 2 on.
 Dir<-"C:/Users/.../GitHub/Stock-Assessment-Sensitivity-Plots/Sensitivity_runs/"

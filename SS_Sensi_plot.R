@@ -6,6 +6,7 @@ library(reshape2)
 library(flextable)
 library(officer)
 library(gridExtra)
+library(ggpubr)
 
 gg_color_hue <- function(n) 
 	{
